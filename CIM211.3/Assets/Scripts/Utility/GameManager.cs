@@ -5,6 +5,11 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject pauseMenuPanel;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void Awake()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
     void Start()
     {
         
@@ -17,11 +22,13 @@ public class GameManager : MonoBehaviour
         {
             pauseMenuPanel.SetActive(true);
             Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
         }
         else if(Input.GetKeyDown(KeyCode.Escape) && pauseMenuPanel.activeSelf)
         {
             pauseMenuPanel.SetActive(false);
             Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
@@ -29,6 +36,7 @@ public class GameManager : MonoBehaviour
     {
         pauseMenuPanel.SetActive(false);
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void QuitMainMenu()

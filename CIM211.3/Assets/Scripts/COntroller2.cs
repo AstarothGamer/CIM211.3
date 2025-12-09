@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class COntroller2 : MonoBehaviour
 {
+    [SerializeField] private TutorialManager tutorial;
     [SerializeField] private float wheelBase = 0.6f; 
 
     [SerializeField] private float maxWheelSpeed = 2.0f;
@@ -27,19 +28,30 @@ public class COntroller2 : MonoBehaviour
     private float leftInput;
     private float rightInput;
 
+
+    public bool getUpFun = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        // rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     private void Update()
     {
         leftInput = Input.GetAxisRaw(leftWheelAxis);   
         rightInput = Input.GetAxisRaw(rightWheelAxis); 
+
+        GettingUp();
     }
 
     private void FixedUpdate()
+    {
+        Movement();
+        
+    }
+
+    private void Movement()
     {
         float dt = Time.fixedDeltaTime;
 
@@ -71,5 +83,34 @@ public class COntroller2 : MonoBehaviour
 
         rb.MoveRotation(newRotation);
         rb.MovePosition(newPosition);
+    }
+
+    public void Rotate()
+    {
+        rb.angularVelocity = Vector3.zero;
+    }
+
+    private void GettingUp()
+    {
+        Debug.Log("1 call");
+        float angleToUp = Vector3.Angle(transform.up, Vector3.up);
+
+        if(angleToUp > 60)
+        {
+            getUpFun = true;
+            Debug.Log("I'm calling");
+            tutorial.getUpTutorial.SetActive(true);
+
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                transform.position += Vector3.up;
+                Invoke(nameof(Rotate), time: 0.01f);
+                transform.rotation = Quaternion.identity;
+            }
+        }
+        else
+        {
+            tutorial.getUpTutorial.SetActive(false);
+        }
     }
 }

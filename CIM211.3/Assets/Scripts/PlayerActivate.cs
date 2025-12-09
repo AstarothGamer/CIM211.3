@@ -15,6 +15,7 @@ public class PlayerActivate : MonoBehaviour
 
 
     [SerializeField] private GameObject objectToActivate;
+    [SerializeField] private GameObject rampPanel;
 
 
     private ZoneType currentZone = ZoneType.None;
@@ -45,6 +46,7 @@ public class PlayerActivate : MonoBehaviour
                 {
 
                     objectToActivate.SetActive(true);
+                    rampPanel.SetActive(false);
 
                 }
 

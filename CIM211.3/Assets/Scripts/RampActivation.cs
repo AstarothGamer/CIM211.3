@@ -6,6 +6,8 @@ public class RampActivation : MonoBehaviour
 {
 
     [SerializeField] private ZoneType zoneType = ZoneType.A;
+    [SerializeField] private GameObject rampObject;
+    [SerializeField] private GameObject rampPanel;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -15,7 +17,11 @@ public class RampActivation : MonoBehaviour
 
         if (player != null)
         {
-
+            if(!rampObject.activeSelf)
+            {
+                rampPanel.SetActive(true);
+            }
+            
             player.SetZone(zoneType);
 
         }
@@ -28,9 +34,8 @@ public class RampActivation : MonoBehaviour
 
         if (player != null)
         {
-
+            rampPanel.SetActive(false);
             player.SetZone(ZoneType.None);
-
         }
     }
 
