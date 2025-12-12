@@ -20,6 +20,9 @@ public class COntroller2 : MonoBehaviour
 
     // [SerializeField] private float wheelRadius = 0.3f;
 
+    [SerializeField] private AnimationCurve wheelCurve;
+    [SerializeField] private float wheelCurveSpeed;
+
     private Rigidbody rb;
 
     private float leftWheelSpeed;
@@ -28,6 +31,8 @@ public class COntroller2 : MonoBehaviour
     private float leftInput;
     private float rightInput;
 
+    private float leftAnimationProgress;
+    private float rightAnimationProgress;
 
     public bool getUpFun = false;
 
@@ -40,8 +45,8 @@ public class COntroller2 : MonoBehaviour
     private void Update()
     {
         leftInput = Input.GetAxisRaw(leftWheelAxis);   
-        rightInput = Input.GetAxisRaw(rightWheelAxis); 
-
+        rightInput = Input.GetAxisRaw(rightWheelAxis);
+        
         GettingUp();
     }
 
@@ -55,9 +60,33 @@ public class COntroller2 : MonoBehaviour
     {
         float dt = Time.fixedDeltaTime;
 
-        float targetLeftSpeed = leftInput * maxWheelSpeed;
-        float targetRightSpeed = rightInput * maxWheelSpeed;
+        if(rightInput != 0 && rightAnimationProgress == 0)
+            leftAnimationProgress = 0;
+        
+        if (leftInput != 0)
+        {
+            if (leftAnimationProgress == 0) rightAnimationProgress = 0;
+            leftAnimationProgress += Time.fixedDeltaTime;
+        }
+        else leftAnimationProgress = 0f;
 
+        if (rightInput != 0)
+        {
+            if (rightInput == 0) leftAnimationProgress = 0;
+            rightAnimationProgress += Time.fixedDeltaTime;
+        }
+        else rightAnimationProgress = 0f;
+        
+        if (leftAnimationProgress >= wheelCurveSpeed || rightAnimationProgress >= wheelCurveSpeed)
+        {
+            leftAnimationProgress = 0;
+            rightAnimationProgress = 0;
+        }
+        
+        
+        float targetLeftSpeed = leftInput * maxWheelSpeed * wheelCurve.Evaluate(leftAnimationProgress / wheelCurveSpeed);
+        float targetRightSpeed = rightInput * maxWheelSpeed * wheelCurve.Evaluate(rightAnimationProgress / wheelCurveSpeed);
+        
         leftWheelSpeed = Mathf.MoveTowards(leftWheelSpeed, targetLeftSpeed, wheelAcceleration * dt);
         rightWheelSpeed = Mathf.MoveTowards(rightWheelSpeed, targetRightSpeed, wheelAcceleration * dt);
 
@@ -92,13 +121,11 @@ public class COntroller2 : MonoBehaviour
 
     private void GettingUp()
     {
-        Debug.Log("1 call");
         float angleToUp = Vector3.Angle(transform.up, Vector3.up);
 
         if(angleToUp > 60)
         {
             getUpFun = true;
-            Debug.Log("I'm calling");
             tutorial.getUpTutorial.SetActive(true);
 
             if(Input.GetKeyDown(KeyCode.Space))
