@@ -37,6 +37,7 @@ public class DialogueCanvas : MonoBehaviour
 
     public void ShowDialogue(string text)
     {
+        StopAllCoroutines();
         box.SetActive(true);
         textAnimator.SetText(text);
     }
